@@ -1,0 +1,127 @@
+# java
+Kaleidoscope
+package kaleidoscope;
+
+import java.awt.Color;
+import java.util.Observable;
+
+
+/**
+ * This is the Model class for a bouncing ball. It is an Observable,
+ * which means that it can notifyObservers that something in the
+ * model has changed, and they should take appropriate actions.
+ * 
+ * @author Nan Wang
+ */
+public class Shape extends Observable {
+    public  int shape_width;
+    public  int shape_height;
+    private int xPosition ;
+    private int yPosition ;
+    private int xLimit, yLimit;
+    private int xDelta ;
+    private int yDelta ;
+    private String shape;
+    private Color color;
+    /**
+     * Sets the "walls" that the ball should bounce off from.
+     * 
+     * @param xLimit The position (in pixels) of the wall on the right.
+     * @param yLimit The position (in pixels) of the floor.
+     */
+    
+    public Shape(String shape, Color color,int xDelta,int yDelta, int XStartPosition, int YStartPosition, int shape_width,int shape_height){
+    	this.xPosition = XStartPosition;
+        this.yPosition = YStartPosition;
+        this.xDelta = xDelta;
+        this.yDelta = yDelta;
+        this.shape = shape;
+        this.shape_width = shape_width;
+        this.shape_height = shape_height;
+        this.color = color;	
+    }
+    
+    public void setLimits(int xLimit, int yLimit) {
+        this.xLimit = xLimit - shape_width;
+        this.yLimit = yLimit - shape_height;
+        xPosition = Math.min(xPosition,xLimit);
+        yPosition = Math.min(yPosition, yLimit);
+    }
+
+
+    
+    public int getshape_width(){
+    	return shape_width;   	
+    }
+    
+    public int getshape_height(){
+    	return shape_height;
+    }
+    /**
+     * @return The balls X position.
+     */
+    public int getX() {
+        return xPosition;
+    }
+
+    /**
+     * @return The balls Y position.
+     */
+    public int getY() {
+        return yPosition;
+    }
+    
+    public int getxLimit(){
+    	return xLimit;
+    }
+    
+    public int getyLimit(){
+    	return yLimit;
+    }
+    
+    public Color getcolor(){
+    	return color;
+    }
+    
+    public void changeColor(Color wn){
+    	this.color = wn;   	
+    }
+    
+    public void changeDirection(){
+    	if(this.yDelta >2){
+    	this.xDelta+=2;
+    	this.yDelta-=2;}
+    	else if(this.xDelta >2){
+    	this.xDelta-=2;
+    	this.yDelta+=2;
+    	}
+    	else{
+    		this.xDelta+=2;
+    		this.yDelta+=2;
+    	}
+    }
+    
+   public String getShape(){
+	   return shape;
+   }
+    
+    /**
+     * Tells the ball to advance one step in the direction that it is moving.
+     * If it hits a wall, its direction of movement changes.
+     */
+    public void makeOneStep() {
+        // Do the work
+        xPosition += xDelta;
+        if (xPosition < 0 || xPosition >= xLimit) {
+            xDelta = -xDelta;
+            xPosition += xDelta;
+        }
+        yPosition += yDelta;
+        if (yPosition < 0 || yPosition >= yLimit) {
+            yDelta = -yDelta;
+            yPosition += yDelta;
+        }
+    }
+
+}
+
