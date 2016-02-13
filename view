@@ -1,0 +1,232 @@
+# java
+Kaleidoscope
+package kaleidoscope;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.JPanel;
+
+import kaleidoscope.Shape;
+
+/**
+ * The View "observes" and displays what is going on in the Model.
+ * In this example, the Model contains only a single bouncing ball.
+ * 
+ * @author Nan Wang
+ */
+public class View extends JPanel implements Observer {
+    
+    /** This is what we will be observing. */
+    Model model;
+
+    /**
+     * Constructor.
+     * @param model The Model whose working is to be displayed.
+     */
+    View(Model model) {
+        this.model = model;
+        this.addComponentListener(new ComponentAdapter(){
+        	@Override
+            public void componentResized(ComponentEvent arg0) {
+        	int width,height;
+        	width = height = Math.min(View.this.getWidth() ,View.this.getHeight());
+        	model.setLimits(width, height);
+        	View.this.setSize(width,height);
+        }
+        });
+    }
+
+    /**
+     * Displays what is going on in the Model. Note: This method should
+     * NEVER be called directly; call repaint() instead.
+     * 
+     * @param g The Graphics on which to paint things.
+     * @see javax.swing.JComponent#paint(java.awt.Graphics)
+     */
+    @Override
+    public void paint(Graphics g) {
+    	int boundw = getWidth();
+    	int boundh = getHeight();
+        g.setColor(Color.black);
+        g.fillRect(0, 0, boundw, boundh);
+        
+        for(Shape s: model.shape()){			
+			if (s.getShape() == "circle") {
+        g.setColor(s.getcolor());
+        g.fillOval(s.getX(), s.getY(),s.shape_width, s.shape_height);
+        g.fillOval(s.getY(), s.getX(),s.shape_width, s.shape_height);
+        g.fillOval(s.getxLimit()-s.getX(), s.getY(),s.shape_width, s.shape_height);
+        g.fillOval(s.getY(), s.getxLimit()-s.getX(),s.shape_width,s.shape_height);
+        g.fillOval(s.getX(),s.getyLimit()-s.getY(),s.shape_width, s.shape_height);
+        g.fillOval(s.getyLimit()-s.getY(),s.getX(),s.shape_width, s.shape_height);
+        g.fillOval(s.getyLimit()-s.getY(),s.getxLimit()-s.getX(),s.shape_width, s.shape_height);
+        g.fillOval(s.getxLimit() - s.getX(),s.getyLimit()-s.getY(),s.shape_width,s.shape_height);
+       }
+		if(s.getShape() == "prismatic"){
+		int[] xArray = new int[4]; // prismatic
+		int[] yArray = new int[4];
+		g.setColor(s.getcolor());
+		xArray[0] = s.getX();
+		xArray[1] = s.getX()+ s.shape_width/2;
+		xArray[2] = s.getX() + s.shape_width;
+		xArray[3] = s.getX() + s.shape_width/2;			
+		yArray[0] = s.getY();
+		yArray[1] = s.getY() - s.shape_height/2;
+		yArray[2] = s.getY() ;
+		yArray[3] = s.getY() + s.shape_height/2;
+		g.fillPolygon(xArray,yArray,4);
+		g.fillPolygon(yArray,xArray,4);
+		xArray[0] = s.getxLimit()-s.getX();
+		xArray[1] = s.getxLimit()-s.getX() + s.shape_width/2;
+		xArray[2] = s.getxLimit()-s.getX() + s.shape_width;
+		xArray[3] = s.getxLimit()-s.getX()+ s.shape_width/2;			
+		yArray[0] = s.getY();
+		yArray[1] = s.getY() - s.shape_height/2;
+		yArray[2] = s.getY();
+		yArray[3] = s.getY()+ s.shape_height/2;
+		g.fillPolygon(xArray,yArray,4);
+		g.fillPolygon(yArray,xArray,4);
+        xArray[0] =  s.getX();
+        xArray[1] =  s.getX() + s.shape_width/2;
+        xArray[2] =  s.getX() + s.shape_width;
+        xArray[3] =  s.getX() + s.shape_width/2;
+        yArray[0] = boundh - s.getY();
+        yArray[1] = boundh - s.getY()-s.shape_height/2;
+        yArray[2] = boundh - s.getY() ;
+        yArray[3] = boundh - s.getY() + s.shape_height/2;
+        g.fillPolygon(xArray,yArray,4);
+		g.fillPolygon(yArray,xArray,4);
+		xArray[0] = boundw - s.getX();
+		xArray[1] = boundw - s.getX() - s.shape_width/2;
+		xArray[2] = boundw - s.getX() - s.shape_width;
+        xArray[3] = boundw - s.getX() - s.shape_width/2;
+        yArray[0] = boundh - s.getY();
+        yArray[1] = boundh - s.getY() - s.shape_height/2;
+        yArray[2] = boundh - s.getY() ;
+        yArray[3] = boundh - s.getY() + s.shape_height/2;
+        g.fillPolygon(xArray,yArray,4);
+		g.fillPolygon(yArray,xArray,4);}
+		if(s.getShape() == "butterfly"){
+			int[] xArray = new int[4]; // butterfly
+			int[] yArray = new int[4];
+			g.setColor(s.getcolor());
+			xArray[0] = s.getX();
+			xArray[1] = s.getX();
+			xArray[2] = s.getX() + s.shape_width;
+			xArray[3] = s.getX() + s.shape_width;			
+			yArray[0] = s.getY();
+			yArray[1] = s.getY() + s.shape_height;
+			yArray[2] = s.getY();
+			yArray[3] = s.getY() + s.shape_height;
+			g.fillPolygon(xArray,yArray,4);
+			g.fillPolygon(yArray,xArray,4);
+			xArray[0] = s.getxLimit() - s.getX();
+			xArray[1] = s.getxLimit() - s.getX();
+			xArray[2] = s.getxLimit() - s.getX() + s.shape_width;
+			xArray[3] = s.getxLimit() - s.getX() + s.shape_width;			
+			yArray[0] = s.getY();
+			yArray[1] = s.getY() + s.shape_height;
+			yArray[2] = s.getY();
+			yArray[3] = s.getY() + s.shape_height;
+			g.fillPolygon(xArray,yArray,4);
+			g.fillPolygon(yArray,xArray,4);
+			xArray[0] = s.getX();
+			xArray[1] = s.getX();
+			xArray[2] = s.getX() + s.shape_width;
+			xArray[3] = s.getX()+ s.shape_width;			
+			yArray[0] = s.getyLimit() - s.getY();
+			yArray[1] = s.getyLimit() - s.getY()+ s.shape_height;
+			yArray[2] = s.getyLimit() - s.getY();
+			yArray[3] = s.getyLimit() - s.getY() + s.shape_height;
+			g.fillPolygon(xArray,yArray,4);
+			g.fillPolygon(yArray,xArray,4);
+			xArray[0] = s.getxLimit() - s.getX();
+			xArray[1] = s.getxLimit() - s.getX();
+			xArray[2] = s.getxLimit() - s.getX() + s.shape_width;
+			xArray[3] = s.getxLimit() - s.getX() + s.shape_width;			
+			yArray[0] = s.getyLimit() - s.getY();
+			yArray[1] = s.getyLimit() - s.getY() + s.shape_height;
+			yArray[2] = s.getyLimit() - s.getY();
+			yArray[3] = s.getyLimit() - s.getY() + s.shape_height;
+			g.fillPolygon(xArray,yArray,4);
+			g.fillPolygon(yArray,xArray,4);		
+		     }
+		if (s.getShape() == "triangle"){
+			int[] xArray = new int[3]; //"triangle"
+			int[] yArray = new int[3];
+			g.setColor(s.getcolor());
+			xArray[0] = s.getX();
+			xArray[1] = s.getX();
+			xArray[2] = s.getX()+ s.shape_width;
+			yArray[0] = s.getY();
+			yArray[1] = s.getY() + s.shape_height;
+			yArray[2] = s.getY();
+			g.fillPolygon(xArray,yArray,3);
+			g.fillPolygon(yArray,xArray,3);
+			xArray[0] = s.getxLimit() - s.getX();
+			xArray[1] = s.getxLimit() - s.getX()+ s.shape_width;
+			xArray[2] = s.getxLimit() - s.getX()+ s.shape_width;
+			yArray[0] = s.getY();
+			yArray[1] = s.getY() + s.shape_height;
+			yArray[2] = s.getY();
+			g.fillPolygon(xArray,yArray,3);
+			g.fillPolygon(yArray,xArray,3);
+			xArray[0] = s.getxLimit() - s.getY();
+			xArray[1] = s.getxLimit() - s.getY() + s.shape_width;
+			xArray[2] = s.getxLimit() - s.getY()+ s.shape_width;
+			yArray[0] = s.getX();
+			yArray[1] = s.getX() + s.shape_height;
+			yArray[2] = s.getX() ;
+			g.fillPolygon(xArray,yArray,3);
+			g.fillPolygon(yArray,xArray,3);
+			xArray[0] = s.getxLimit() - s.getX();
+			xArray[1] = s.getxLimit() - s.getX() + s.shape_width;
+			xArray[2] = s.getxLimit() - s.getX()+ s.shape_width;
+			yArray[0] = s.getyLimit() - s.getY() + s.shape_height;
+			yArray[1] = s.getyLimit() - s.getY() + s.shape_height;
+			yArray[2] = s.getyLimit() - s.getY() ;
+			g.fillPolygon(xArray,yArray,3);
+			g.fillPolygon(yArray,xArray,3);
+			}			
+        if (s.getShape() == "roundRect"){
+        	g.setColor(s.getcolor());
+            g.fillRoundRect(s.getX(), s.getY(),s.shape_width, s.shape_height,s.shape_width/2,s.shape_height/2);
+            g.fillRoundRect(s.getY(), s.getX(),s.shape_width, s.shape_height,s.shape_width/2,s.shape_height/2);
+            g.fillRoundRect(s.getxLimit()-s.getX(), s.getY(),s.shape_width, s.shape_height,s.shape_width/2,s.shape_height/2);
+            g.fillRoundRect(s.getY(), s.getxLimit()-s.getX(),s.shape_width,s.shape_height,s.shape_width/2,s.shape_height/2);
+            g.fillRoundRect(s.getX(),s.getyLimit()-s.getY(),s.shape_width, s.shape_height,s.shape_width/2,s.shape_height/2);
+            g.fillRoundRect(s.getyLimit()-s.getY(),s.getX(),s.shape_width, s.shape_height,s.shape_width/2,s.shape_height/2);
+            g.fillRoundRect(s.getyLimit()-s.getY(),s.getxLimit()-s.getX(),s.shape_width, s.shape_height,s.shape_width/2,s.shape_height/2);
+            g.fillRoundRect(s.getxLimit() - s.getX(),s.getyLimit()-s.getY(),s.shape_width,s.shape_height,s.shape_width/2,s.shape_height/2);
+        }if (s.getShape() == "arc"){
+        	g.setColor(s.getcolor());
+            g.fillArc(s.getX(), s.getY(),s.shape_width, s.shape_height, -90, 270);
+            g.fillArc(s.getY(), s.getX(),s.shape_width, s.shape_height, 0, -270);
+            g.fillArc(s.getxLimit()-s.getX(), s.getY(),s.shape_width, s.shape_height,0,270);
+            g.fillArc(s.getY(), s.getxLimit()-s.getX(),s.shape_width,s.shape_height,0,270);
+            g.fillArc(s.getX(),s.getyLimit()-s.getY(),s.shape_width, s.shape_height,90,-270);
+            g.fillArc(s.getyLimit()-s.getY(),s.getX(),s.shape_width, s.shape_height,90,-270);
+            g.fillArc(s.getyLimit()-s.getY(),s.getxLimit()-s.getX(),s.shape_width, s.shape_height,-90,270);
+            g.fillArc(s.getxLimit() - s.getX(),s.getyLimit()-s.getY(),s.shape_width,s.shape_height,0,-270);
+        }
+        }
+        }
+
+    /**
+     * When an Observer notifies Observers (and this View is an Observer),
+     * this is the method that gets called.
+     * 
+     * @param obs Holds a reference to the object being observed.
+     * @param arg If notifyObservers is given a parameter, it is received here.
+     * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+     */
+    @Override
+    public void update(Observable obs, Object arg) {
+        repaint();
+    }
+}
