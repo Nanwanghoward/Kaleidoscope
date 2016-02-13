@@ -1,0 +1,209 @@
+# java
+Kaleidoscope
+package kaleidoscope;
+
+
+import java.util.Observable;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import kaleidoscope.Shape;
+
+/**
+ * This is the Model class for a bouncing ball. It is an Observable,
+ * which means that it can notifyObservers that something in the
+ * model has changed, and they should take appropriate actions.
+ * 
+ * @author Nan Wang
+ */
+public class Model extends Observable {
+    private int xLimit, yLimit;
+    public Timer timer;
+    private long period = 40;
+    private int i = 0;
+    private ArrayList<Shape> shapeList = new ArrayList<Shape>();    
+    private Shape circle = new Shape("circle",Color.blue, 4, 6, 10, 30, 30, 30);
+    private Shape prismatic = new Shape("prismatic",Color.green, 2, 4, 40, 80, 30, 50);
+    private Shape roundRect2 = new Shape("roundRect",Color.yellow, 3, 4, 100, 120, 30, 30);
+    private Shape triangle = new Shape("triangle",Color.pink, 2, 3, 130, 150, 35, 35);
+    private Shape roundRect = new Shape("roundRect",Color.LIGHT_GRAY, 6, 8, 20, 160, 35, 35);
+    private Shape prismatic2 = new Shape("prismatic",Color.orange, 10, 13, 180, 220, 30, 40);
+    private Shape butterfly = new Shape("butterfly",Color.red, 8, 5, 30, 260, 40, 40);
+	private Shape triangle2 = new Shape("triangle",Color.magenta, 8, 5, 320, 260, 40, 40);
+	private Shape circle2 = new Shape("circle",Color.red, 5, 8, 360, 260, 40, 40);
+	private Shape triangle3 = new Shape("triangle",Color.gray, 3, 6, 10, 10, 50, 50);
+	private Shape arc = new Shape("arc",Color.cyan, 6, 8, 50, 10, 50, 50);
+	
+	public TimerTask timertask = new Strobe();
+	
+	public Model(){
+		 shapeList.add(circle);
+		 shapeList.add(prismatic);
+		 shapeList.add(roundRect2);
+	     shapeList.add(triangle);
+	     shapeList.add(roundRect); 
+	     shapeList.add(prismatic2);
+	     shapeList.add(butterfly);
+    }
+    
+    /**
+     * Tells the ball to start moving. This is done by starting a Timer
+     * that periodically executes a TimerTask. The TimerTask then tells
+     * the ball to make one "step."
+     */
+    public void start() {
+        timer = new Timer();
+        timer.schedule(new Strobe(), 0, period); // 25 times a second        
+    }
+    
+    /**
+     * Tells the ball to stop where it is.
+     */
+    public void pause() {
+        timer.cancel();
+    }
+    
+    public void speedUp(){
+    	if(period/1.5 >1){
+    	period/=1.5;
+    	timer.cancel();
+    	timer = new Timer();
+    	timer.schedule(new Strobe(), 0, period );}  
+    }
+    
+    public void slowDown(){
+    	if(period == 1){
+    		timer.cancel();
+        	timer = new Timer();
+        	period *= 2;
+        	timer.schedule(new Strobe(), 0, period);
+    	}
+    	else{
+    	timer.cancel();
+    	timer = new Timer();
+    	period *= 1.5;
+    	timer.schedule(new Strobe(), 0, period);}
+    }
+    
+    public void changeColor(){
+    	if(shapeList.size()==1&&(shapeList.get(0).getcolor()!=Color.red))
+    		shapeList.get(i%shapeList.size()).changeColor(Color.red);
+    	else if(shapeList.size()==1&&(shapeList.get(0).getcolor() == Color.red))
+    		shapeList.get(i%shapeList.size()).changeColor(Color.blue);
+    	else if(shapeList.size() == 2){
+    		Color temp;
+    		temp = shapeList.get(0).getcolor();
+    		shapeList.get(0).changeColor(shapeList.get(1).getcolor());
+    		shapeList.get(1).changeColor(temp);
+    	}
+    	else{if((i%shapeList.size()+1)<shapeList.size())
+    	shapeList.get(i%shapeList.size()).changeColor(shapeList.get(i%shapeList.size()+1).getcolor()); // change the current color to the color of next pattern in the list.     	
+    	else
+    	shapeList.get(shapeList.size()-1).changeColor(shapeList.get(0).getcolor()); // change the current color to the color of next pattern in the list.
+    	i++;}
+    }
+    
+    public void addshape(){
+    	if (shapeList.size() == 0){
+    		shapeList.add(circle);
+    	}
+    	else if(shapeList.size() == 1){
+    	    shapeList.add(prismatic);
+    	}
+    	else if(shapeList.size() == 2){
+    		shapeList.add(roundRect2);
+    	}
+    	else if(shapeList.size() == 3){
+    	    shapeList.add(triangle);
+    	}
+    	else if(shapeList.size() == 4){
+    		shapeList.add(roundRect);
+    	}
+    	else if(shapeList.size() == 5){
+    		shapeList.add(prismatic2);
+    	}
+    	else if(shapeList.size() == 6){
+    		shapeList.add(butterfly);
+    	}
+    	else if(shapeList.size() == 7){
+    		shapeList.add(triangle2);
+    	}else if(shapeList.size() == 8){
+    		shapeList.add(circle2);   		
+    	}else if(shapeList.size()== 9){
+    		shapeList.add(triangle3);
+    	}else if(shapeList.size()== 10){
+    		shapeList.add(arc);
+    	}
+    }
+    
+    public void removeshape(){
+    	shapeList.remove(shapeList.size()-1);
+    }
+    public void removeall(){
+    	shapeList.removeAll(shapeList);
+    }
+    
+    public ArrayList<Shape> shape(){
+    	return shapeList;
+    }
+    
+    public void changeDirection(){
+    	for(Shape s: shapeList){
+    		s.changeDirection();
+    	}
+    }
+    
+    public void reset(){
+    	period = 40;
+    	shapeList.removeAll(shapeList);
+        circle = new Shape("circle",Color.blue, 4, 6, 10, 30, 30, 30);
+        prismatic = new Shape("prismatic",Color.green, 2, 4, 40, 80, 30, 50);
+        roundRect2 = new Shape("roundRect",Color.yellow, 3, 4, 100, 120, 30, 30);
+        triangle = new Shape("triangle",Color.pink, 2, 3, 130, 150, 35, 35);
+        roundRect = new Shape("roundRect",Color.LIGHT_GRAY, 6, 8, 20, 160, 35, 35);
+        prismatic2 = new Shape("prismatic",Color.orange, 10, 13, 180, 220, 30, 40);
+        butterfly = new Shape("butterfly",Color.red, 8, 5, 30, 260, 40, 40);
+    	triangle2 = new Shape("triangle",Color.magenta, 8, 5, 320, 260, 40, 40);
+    	circle2 = new Shape("circle",Color.red, 5, 8, 360, 260, 40, 40);
+    	triangle3 = new Shape("triangle",Color.gray, 3, 6, 10, 10, 50, 50);
+        arc = new Shape("arc",Color.cyan, 6, 8, 50, 10, 50, 50);
+        shapeList.add(circle);
+		shapeList.add(prismatic);
+		shapeList.add(roundRect2);
+	    shapeList.add(triangle);
+	    shapeList.add(roundRect); 
+	    shapeList.add(prismatic2);
+	    shapeList.add(butterfly);
+	    if(timer != null)
+	    timer.cancel();
+    }
+
+    
+    public void setLimits(int xLimit, int yLimit) {
+    	for(Shape s: shapeList)
+    		s.setLimits(xLimit, yLimit);
+    }
+    
+    /**
+     * Tells the ball to advance one step in the direction that it is moving.
+     * If it hits a wall, its direction of movement changes.
+     */
+ 
+    
+    /**
+     * Tells the model to advance one "step."
+     */
+     class Strobe extends TimerTask {   
+        @Override
+        public void run() {
+        	for(Shape s:shapeList){
+            s.makeOneStep();
+         // Notify observers
+            setChanged();
+            notifyObservers();
+        }
+    }
+  }
+}
